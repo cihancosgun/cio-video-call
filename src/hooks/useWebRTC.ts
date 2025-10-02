@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import Peer, { MediaConnection } from 'peerjs';
+import { supabase } from '../lib/supabase';
 
 interface Participant {
   peerId: string;
@@ -30,8 +31,8 @@ export const useWebRTC = (roomCode: string, userId: string) => {
 
         setLocalStream(stream);
         originalStreamRef.current = stream;
-
-        const peer = new Peer(`${roomCode}-${userId}`, {
+        console.log("peer id", `${roomCode}-${userId}`);
+        const peer = new Peer({
           config: {
             iceServers: [
               { urls: 'stun:stun.l.google.com:19302' },
@@ -44,6 +45,17 @@ export const useWebRTC = (roomCode: string, userId: string) => {
 
         peer.on('open', (id) => {
           console.log('Peer connected with ID:', id);
+          supabase.from('room_participants').insert({
+            peer_id: id,
+            room_id: roomCode,
+            user_id: userId,
+            is_active: true,
+          }).then(({ error }) => {
+            if (error) {
+              console.error('Failed to join room:', error);
+              setError('Failed to join room');
+            }
+          });
           discoverPeers();
         });
 
@@ -82,24 +94,31 @@ export const useWebRTC = (roomCode: string, userId: string) => {
   }, [roomCode, userId]);
 
   const discoverPeers = () => {
+    console.log('Discovering peers in room:', roomCode);
     if (!peerRef.current || !localStream) return;
-
-    const interval = setInterval(() => {
-      for (let i = 0; i < 10; i++) {
-        const potentialPeerId = `${roomCode}-peer${i}`;
-        if (
-          potentialPeerId !== peerRef.current?.id &&
-          !connectedPeersRef.current.has(potentialPeerId)
-        ) {
-          connectToPeer(potentialPeerId);
+    console.log('Peer initialized:', roomCode, userId);
+    supabase.from('room_participants').select('*').eq('room_id', roomCode).eq('is_active', true)
+      .then(({ data, error }) => {
+        if (error) {
+          console.error('Failed to fetch participants:', error);
+          return;
         }
-      }
-    }, 2000);
-
-    setTimeout(() => clearInterval(interval), 10000);
+        data?.forEach((participant) => {
+          console.log('Participant:', participant);
+          const potentialPeerId = participant.peer_id;
+          console.log('Discovered peer ID:', potentialPeerId);
+          if (
+            potentialPeerId !== peerRef.current?.id &&
+            !connectedPeersRef.current.has(potentialPeerId)
+          ) {
+            connectToPeer(potentialPeerId);
+          }
+        });
+      });
   };
 
   const connectToPeer = (peerId: string) => {
+    console.log('Attempting to connect to peer:', peerId);
     if (!peerRef.current || !localStream || connectionsRef.current.has(peerId)) {
       return;
     }

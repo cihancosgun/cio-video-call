@@ -34,4 +34,5 @@ export type RoomParticipant = {
   joined_at: string;
   left_at: string | null;
   is_active: boolean;
+  peer_id: string;
 };

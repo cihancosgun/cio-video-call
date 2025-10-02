@@ -49,11 +49,11 @@ export const Room = ({ roomCode, onLeave }: RoomProps) => {
     const joinRoom = async () => {
       if (!user) return;
 
-      await supabase.from('room_participants').insert({
-        room_id: roomCode,
-        user_id: user.id,
-        is_active: true,
-      });
+      // await supabase.from('room_participants').insert({
+      //   room_id: roomCode,
+      //   user_id: user.id,
+      //   is_active: true,
+      // });
     };
 
     joinRoom();
@@ -66,12 +66,12 @@ export const Room = ({ roomCode, onLeave }: RoomProps) => {
   const leaveRoom = async () => {
     if (!user) return;
 
-    await supabase
-      .from('room_participants')
-      .update({ is_active: false, left_at: new Date().toISOString() })
-      .eq('room_id', roomCode)
-      .eq('user_id', user.id)
-      .eq('is_active', true);
+    // await supabase
+    //   .from('room_participants')
+    //   .update({ is_active: false, left_at: new Date().toISOString() })
+    //   .eq('room_id', roomCode)
+    //   .eq('user_id', user.id)
+    //   .eq('is_active', true);
   };
 
   const handleLeave = async () => {
