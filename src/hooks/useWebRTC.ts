@@ -94,7 +94,7 @@ export const useWebRTC = (roomCode: string, userId: string) => {
   }, [roomCode, userId]);
 
   const discoverPeers = () => {
-    console.log('Discovering peers in room:', roomCode);
+    console.log('Discovering peers in room:', roomCode, peerRef.current, localStream);
     if (!peerRef.current || !localStream) return;
     console.log('Peer initialized:', roomCode, userId);
     supabase.from('room_participants').select('*').eq('room_id', roomCode).eq('is_active', true)

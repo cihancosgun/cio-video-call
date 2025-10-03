@@ -48,12 +48,6 @@ export const Room = ({ roomCode, onLeave }: RoomProps) => {
   useEffect(() => {
     const joinRoom = async () => {
       if (!user) return;
-
-      // await supabase.from('room_participants').insert({
-      //   room_id: roomCode,
-      //   user_id: user.id,
-      //   is_active: true,
-      // });
     };
 
     joinRoom();
@@ -66,12 +60,12 @@ export const Room = ({ roomCode, onLeave }: RoomProps) => {
   const leaveRoom = async () => {
     if (!user) return;
 
-    // await supabase
-    //   .from('room_participants')
-    //   .update({ is_active: false, left_at: new Date().toISOString() })
-    //   .eq('room_id', roomCode)
-    //   .eq('user_id', user.id)
-    //   .eq('is_active', true);
+    await supabase
+      .from('room_participants')
+      .update({ is_active: false, left_at: new Date().toISOString() })
+      .eq('room_id', roomCode)
+      .eq('user_id', user.id)
+      .eq('is_active', true);
   };
 
   const handleLeave = async () => {
@@ -136,15 +130,14 @@ export const Room = ({ roomCode, onLeave }: RoomProps) => {
 
       <div className="flex-1 p-4 overflow-hidden">
         <div
-          className={`grid gap-4 h-full ${
-            participants.length === 0
+          className={`grid gap-4 h-full ${participants.length === 0
               ? 'grid-cols-1'
               : participants.length === 1
-              ? 'grid-cols-2'
-              : participants.length <= 4
-              ? 'grid-cols-2'
-              : 'grid-cols-3'
-          }`}
+                ? 'grid-cols-2'
+                : participants.length <= 4
+                  ? 'grid-cols-2'
+                  : 'grid-cols-3'
+            }`}
         >
           <div className="relative bg-slate-800 rounded-xl overflow-hidden shadow-2xl group">
             <video
@@ -178,11 +171,10 @@ export const Room = ({ roomCode, onLeave }: RoomProps) => {
         <div className="max-w-2xl mx-auto flex items-center justify-center gap-4">
           <button
             onClick={toggleAudio}
-            className={`p-4 rounded-full transition shadow-lg ${
-              isAudioEnabled
+            className={`p-4 rounded-full transition shadow-lg ${isAudioEnabled
                 ? 'bg-slate-700 hover:bg-slate-600 text-white'
                 : 'bg-red-600 hover:bg-red-700 text-white'
-            }`}
+              }`}
             title={isAudioEnabled ? 'Mute' : 'Unmute'}
           >
             {isAudioEnabled ? <Mic className="w-6 h-6" /> : <MicOff className="w-6 h-6" />}
@@ -190,11 +182,10 @@ export const Room = ({ roomCode, onLeave }: RoomProps) => {
 
           <button
             onClick={toggleVideo}
-            className={`p-4 rounded-full transition shadow-lg ${
-              isVideoEnabled
+            className={`p-4 rounded-full transition shadow-lg ${isVideoEnabled
                 ? 'bg-slate-700 hover:bg-slate-600 text-white'
                 : 'bg-red-600 hover:bg-red-700 text-white'
-            }`}
+              }`}
             title={isVideoEnabled ? 'Stop Video' : 'Start Video'}
           >
             {isVideoEnabled ? <Video className="w-6 h-6" /> : <VideoOff className="w-6 h-6" />}
@@ -202,11 +193,10 @@ export const Room = ({ roomCode, onLeave }: RoomProps) => {
 
           <button
             onClick={toggleScreenShare}
-            className={`p-4 rounded-full transition shadow-lg ${
-              isScreenSharing
+            className={`p-4 rounded-full transition shadow-lg ${isScreenSharing
                 ? 'bg-green-600 hover:bg-green-700 text-white'
                 : 'bg-slate-700 hover:bg-slate-600 text-white'
-            }`}
+              }`}
             title={isScreenSharing ? 'Stop Sharing' : 'Share Screen'}
           >
             {isScreenSharing ? (
@@ -218,11 +208,10 @@ export const Room = ({ roomCode, onLeave }: RoomProps) => {
 
           <button
             onClick={handleRecording}
-            className={`p-4 rounded-full transition shadow-lg ${
-              isRecording
+            className={`p-4 rounded-full transition shadow-lg ${isRecording
                 ? 'bg-red-600 hover:bg-red-700 text-white animate-pulse'
                 : 'bg-slate-700 hover:bg-slate-600 text-white'
-            }`}
+              }`}
             title={isRecording ? 'Stop Recording' : 'Start Recording'}
           >
             <Circle className={`w-6 h-6 ${isRecording ? 'fill-white' : ''}`} />
@@ -253,7 +242,7 @@ const ParticipantVideo = ({ participant }: { participant: { peerId: string; stre
   }, [participant.stream]);
 
   const hasVideo = participant.stream.getVideoTracks().length > 0 &&
-                    participant.stream.getVideoTracks()[0].enabled;
+    participant.stream.getVideoTracks()[0].enabled;
 
   return (
     <div className="relative bg-slate-800 rounded-xl overflow-hidden shadow-2xl">

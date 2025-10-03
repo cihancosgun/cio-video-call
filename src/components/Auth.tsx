@@ -140,7 +140,7 @@ export const Auth = () => {
           </div>
         </div>
 
-        <button
+        {/* <button
           onClick={handleGoogleSignIn}
           disabled={loading}
           className="w-full bg-white hover:bg-gray-50 text-gray-900 font-semibold py-3 rounded-lg border-2 border-gray-300 transition disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3"
@@ -164,7 +164,7 @@ export const Auth = () => {
             />
           </svg>
           Google
-        </button>
+        </button> */}
 
         <div className="mt-6 text-center">
           <button
