@@ -1,4 +1,4 @@
-# VideoMeet - Zoom Benzeri Video Konferans Uygulaması
+# VideoMeet - Video Konferans Uygulaması
 
 Modern, güvenli ve kullanımı kolay bir video konferans web uygulaması. React, TypeScript, WebRTC ve Supabase ile geliştirilmiştir.
 
