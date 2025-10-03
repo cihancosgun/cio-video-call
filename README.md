@@ -1,4 +1,4 @@
-# VideoMeet - Video Konferans Uygulaması
+# Cio-Video-Call - Video Konferans Uygulaması
 
 Modern, güvenli ve kullanımı kolay bir video konferans web uygulaması. React, TypeScript, WebRTC ve Supabase ile geliştirilmiştir.
 
