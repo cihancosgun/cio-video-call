@@ -20,6 +20,7 @@ export const useWebRTC = (roomCode: string, userId: string) => {
   const connectedPeersRef = useRef<Set<string>>(new Set());
   const screenStreamRef = useRef<MediaStream | null>(null);
   const originalStreamRef = useRef<MediaStream | null>(null);
+  const [peerOpened, setPeerOpened] = useState(false);
 
   useEffect(() => {
     const initializePeer = async () => {
@@ -45,6 +46,7 @@ export const useWebRTC = (roomCode: string, userId: string) => {
 
         peer.on('open', (id) => {
           console.log('Peer connected with ID:', id);
+          setPeerOpened(true);
           supabase.from('room_participants').insert({
             peer_id: id,
             room_id: roomCode,
@@ -93,9 +95,9 @@ export const useWebRTC = (roomCode: string, userId: string) => {
   }, [roomCode, userId]);
 
   useEffect(() => {
-    if (!peerRef.current || !localStream || !roomCode || !userId) return;
+    if (!peerRef.current || !localStream || !roomCode || !userId || !peerOpened) return;
     discoverPeers();
-  }, [roomCode, userId, peerRef.current, localStream]);
+  }, [roomCode, userId, peerRef.current, localStream, peerOpened]);
 
   const discoverPeers = () => {
     console.log('Discovering peers in room:', roomCode, peerRef.current, localStream);
