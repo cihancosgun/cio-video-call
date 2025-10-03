@@ -56,7 +56,6 @@ export const useWebRTC = (roomCode: string, userId: string) => {
               setError('Failed to join room');
             }
           });
-          discoverPeers();
         });
 
         peer.on('call', (call) => {
@@ -92,6 +91,11 @@ export const useWebRTC = (roomCode: string, userId: string) => {
       peerRef.current?.destroy();
     };
   }, [roomCode, userId]);
+
+  useEffect(() => {
+    if (!peerRef.current || !localStream || !roomCode || !userId) return;
+    discoverPeers();
+  }, [roomCode, userId, peerRef.current, localStream]);
 
   const discoverPeers = () => {
     console.log('Discovering peers in room:', roomCode, peerRef.current, localStream);
